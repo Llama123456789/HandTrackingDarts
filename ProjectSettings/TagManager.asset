@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - DartBoard
+  - Dart
+  - DartCase
+  - Hand
   layers:
   - Default
   - TransparentFX

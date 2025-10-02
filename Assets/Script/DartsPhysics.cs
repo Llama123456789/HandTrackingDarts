@@ -1,3 +1,5 @@
+using Oculus.Interaction;
+using Oculus.Interaction.HandGrab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +11,8 @@ public class DartsPhysics : MonoBehaviour
 
     [Range(0f, 0.1f)]
     public float dragCoefficient = 0.02f;
+    [SerializeField]
+    private GameObject Tip;
     private void Start()
     {
         dartRb = GetComponent<Rigidbody>();
@@ -33,9 +37,19 @@ public class DartsPhysics : MonoBehaviour
             if (collision.GetContact(0).thisCollider.name == "Tip")
             {
                 StickToBoard(collision);
+                Tip.SetActive(false);
             }
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Hand")
+        {
+            dartRb.isKinematic = false;
+        }
+    }
+
 
     void StickToBoard(Collision collision)
     {
@@ -46,7 +60,7 @@ public class DartsPhysics : MonoBehaviour
         dartRb.isKinematic = true;
         dartRb.useGravity = false;
         Quaternion stickRotation = transform.rotation; // ワールド回転を保存
-        transform.SetParent(collision.transform);      // 親を設定
+        transform.SetParent(collision.transform,true);      // 親を設定
         transform.rotation = stickRotation;            // 回転を戻す
     }
 }
