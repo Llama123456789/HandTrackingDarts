@@ -27,7 +27,7 @@ public class DartsManager : MonoBehaviour
             tryDartsRb[i] = tryDarts[i].GetComponent<Rigidbody>();
         }
     }
-    public void DartInitialize()
+    public void DartInitialize() //ダーツのリセット
     {
         for(int i = 0;i < tryDarts.Length; i++)
         {
