@@ -18,6 +18,15 @@ public class ScoreBoardButtonEvent : MonoBehaviour
     {
         //OnButtonPush();//テスト用
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == ("IndexFinger"))
+        {
+            OnButtonPush();
+
+        }
+    }
     public void OnButtonPush()
     {
         Debug.Log("ボタンが押された"+ gameModeNum);
