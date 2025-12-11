@@ -13,6 +13,8 @@ public class ScoreBoardButtonEvent : MonoBehaviour
     private TextMeshProUGUI dartsScore;
     [SerializeField]
     private DartboardScore dartBoardScore;
+    [SerializeField]
+    private bool resetButton = false;
 
     private void Start()
     {
@@ -21,9 +23,18 @@ public class ScoreBoardButtonEvent : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == ("IndexFinger"))
+        if(other.gameObject.tag == ("Hand"))
         {
-            OnButtonPush();
+            if(!resetButton)
+            {
+                Debug.Log("gameModeButton :"+gameModeNum);
+                OnButtonPush();
+            }
+            else
+            {
+                ScoreResetButton();
+                Debug.Log("ResetButton");
+            }
 
         }
     }
