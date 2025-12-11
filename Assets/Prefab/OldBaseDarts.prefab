@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 391491838469972873}
   - component: {fileID: 2652436975027871131}
   m_Layer: 0
-  m_Name: BaseDarts
+  m_Name: OldBaseDarts
   m_TagString: Dart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

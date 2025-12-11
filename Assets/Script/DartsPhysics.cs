@@ -13,6 +13,10 @@ public class DartsPhysics : MonoBehaviour
     public float dragCoefficient = 0.02f;
     [SerializeField]
     private GameObject Tip;
+    [SerializeField]
+    private AudioSource audioSource;
+    [SerializeField]
+    private AudioClip se_Dartsthrow;
     private void Start()
     {
         dartRb = GetComponent<Rigidbody>();
@@ -37,6 +41,7 @@ public class DartsPhysics : MonoBehaviour
             if (collision.GetContact(0).thisCollider.name == "Tip")
             {
                 StickToBoard(collision);
+                audioSource.PlayOneShot(se_Dartsthrow);
                 //Tip.SetActive(false);
             }
         }
