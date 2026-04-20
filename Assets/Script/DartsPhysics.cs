@@ -17,22 +17,63 @@ public class DartsPhysics : MonoBehaviour
     private AudioSource audioSource;
     [SerializeField]
     private AudioClip se_Dartsthrow;
+
+    [SerializeField] private HandGrabInteractable handGrabInteractable; // Inspectorで設定
+
+    private bool isThrown = false;
     private void Start()
     {
         dartRb = GetComponent<Rigidbody>();
+
+        if (handGrabInteractable != null)
+        {
+            handGrabInteractable.WhenSelectingInteractorViewRemoved +=
+                OnReleased;
+        }
     }
+
+    private void OnDestroy()
+    {
+        if (handGrabInteractable != null)
+        {
+            handGrabInteractable.WhenSelectingInteractorViewRemoved -=
+                OnReleased;
+        }
+    }
+
+    private void OnReleased(IInteractorView interactor)
+    {
+        dartRb.isKinematic = false;
+        isThrown = true;
+        Debug.Log($"[Darts] Released! velocity={dartRb.velocity.magnitude:F2}");
+    }
+
     private void FixedUpdate()
     {
+        // ★ 投擲後かつ速度がある時だけ姿勢制御
+        if (!isThrown) return;
+        if (dartRb.isKinematic) return;
+
         if (dartRb.velocity.magnitude > 0.1f)
         {
+            // 速度方向にダーツを向ける
             Quaternion targetRot = Quaternion.LookRotation(dartRb.velocity.normalized);
             dartRb.MoveRotation(Quaternion.Slerp(dartRb.rotation, targetRot, Time.deltaTime * 5f));
 
             Vector3 vel = dartRb.velocity;
             Vector3 dragForce = -vel.normalized * vel.sqrMagnitude * dragCoefficient;
-            //dartRb.AddForceAtPosition(dragForce, flightTransform.position);
+            dartRb.AddForce(dragForce);
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Hand")
+        {
+            dartRb.isKinematic = false;
+        }
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("DartBoard"))
@@ -42,26 +83,16 @@ public class DartsPhysics : MonoBehaviour
             {
                 StickToBoard(collision);
                 audioSource.PlayOneShot(se_Dartsthrow);
-                //Tip.SetActive(false);
             }
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.tag == "Hand")
-        {
-            dartRb.isKinematic = false;
-        }
-    }
+    
 
 
     void StickToBoard(Collision collision)
     {
-        // 衝突面に先端を向ける
-        //transform.rotation = Quaternion.LookRotation(-collision.contacts[0].normal);
-
-        // 物理を止めてボードに固定
+        isThrown = false;
         dartRb.isKinematic = true;
         dartRb.useGravity = false;
         Quaternion stickRotation = transform.rotation; // ワールド回転を保存
